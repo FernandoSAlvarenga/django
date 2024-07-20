@@ -1,0 +1,3 @@
+pip install mysqlclient
+python manage.py createsuperuser
+python manage.py migrate  

@@ -1,0 +1,203 @@
+/* Estilos globais para toda a aplicação */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #eeeae8;
+    color: #333;
+    height: 100%;
+}
+
+/* Estilo para a imagem de fundo */
+.background-image {
+    background-image: url('image.jfif'); /* Substitua 'image.jpg' pelo nome do seu arquivo de imagem */
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo do cabeçalho */
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Estilo do formulário de login */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+input[type="text"], input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button[type="submit"] {
+    width: 100%;
+    background-color: #0000a4;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+    background-color: #0017a4;
+}
+
+/* Estilo para links */
+a {
+    color: #0000a4;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo para o rodapé */
+header {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #ccc;
+}
+
+header ul {
+    padding: 0;
+}
+
+header li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+header li a {
+    color: #333;
+}
+
+/* Estilo para tabelas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    font-weight: bold;
+    background-color: #f2f2f2;
+}
+
+/* Estilos para mensagens de alerta */
+.msg-alertas {
+    width: 100%;
+    margin: 20px auto;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.ms {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.erro {
+    background-color: #ffcaca;
+    border: 1px solid #a60202;
+    color: #a60202;
+}
+
+.ok {
+    background-color: #a6ffbc;
+    border: 1px solid #00bd00;
+    color: #00bd00;
+}
+
+.alerta {
+    background-color: #ffffbf;
+    border: 1px solid #2b2b2b;
+    color: #2b2b2b;
+}
+
+.info {
+    background-color: #b3e7ff;
+    border: 1px solid #018ace;
+    color: #018ace;
+}
+
+/* Estilos para a barra lateral de navegação */
+.navlateral {
+    width: 140px;
+    height: 100%;
+    left: -140px;
+    position: absolute;
+    transition: all 0.5s;
+}
+
+.ul1 {
+    top: 70px;
+    position: absolute;
+    width: 100%;
+    text-align: left;
+    margin-left: 0;
+    left: 0;
+}
+
+input[type="checkbox"]:checked ~ .navlateral {
+    transform: translateX(140px);
+}
+
+.labellateral {
+    padding: 15px;
+    position: absolute;
+    z-index: 1;
+}
+
+/* Estilos específicos para a página "para_criancas.html" */
+section {
+    display: flex;
+    width: 600px;
+    height: 200px;
+    margin: 20px auto;
+}
+
+section img {
+    width: 0;
+    flex-grow: 1;
+    object-fit: cover;
+    opacity: 0.5;
+    transition: width 0.5s ease, opacity 0.5s ease, filter 0.5s ease;
+}
+
+section img:hover {
+    cursor: crosshair;
+    width: 300px;
+    opacity: 1;
+    filter: contrast(100%);
+}

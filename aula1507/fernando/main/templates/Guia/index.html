@@ -1,0 +1,17 @@
+{% extends "template.html" %}
+{% block title %}Página Inicial{% endblock %}
+{% block content %}
+
+<h2 style="text-align: center; font-size: 25px; font-family: Segoe UI;">Bem vindo, {{ session.username }}!</h2>
+
+<hr>
+
+<div class="divimg">
+    <img src="{{ url_for('static', filename='giphy.gif') }}" alt="GIF">
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+{% endblock %}

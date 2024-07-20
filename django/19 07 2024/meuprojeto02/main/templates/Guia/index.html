@@ -1,0 +1,145 @@
+{% extends "template.html" %}
+{%block titulo%}
+O que é Django?
+{%endblock%}
+{% block conteudo%}
+    {% load static %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}static/style.css">
+    <title >Instalando o Django</title>
+</head>
+<body>
+   
+    <h1 class="titulo-principal">Instalando o Django</h1>
+
+     <h2>Etapas</h2>
+
+    <h3>1. Instalação do venv</h3>
+
+    <pre>
+        pip install virtualenv
+    </pre>
+
+    <h3>2. Criação de um Ambiente Virtual</h3>
+
+    <pre>
+        python -m venv .venv
+    </pre>
+
+    <h3>3. Ativação do Ambiente Virtual</h3>
+
+    <pre>
+        .\.venv\Scripts\activate
+    </pre>
+
+    <h3>4. Atualização do pip</h3>
+
+    <pre>
+        python.exe -m pip install --upgrade pip
+    </pre>
+
+    <h3>5. Instalação do Django</h3>
+
+    <pre>
+        pip install django
+    </pre>
+
+    <h3>6. Verificação da Instalação do Django</h3>
+
+    <pre>
+        django-admin --version
+    </pre>
+
+    <h3>7. Instalação do Conector MySQL</h3>
+
+    <pre>
+        pip install mysql-connector
+    </pre>
+
+    <h3>8. Criação do Projeto Django</h3>
+
+    <pre>
+        cd <diretorio_do_projeto>
+        django-admin startproject meuprojeto
+    </pre>
+
+    <h3>9. Ativação do Diretório do Projeto</h3>
+
+    <pre>
+        cd meuprojeto
+    </pre>
+
+    <h3>10. Exploração da Estrutura do Projeto</h3>
+
+    O diretório "meuprojeto" contém os seguintes arquivos e pastas:
+
+    <ul>
+        <li>manage.py: Script para gerenciar tarefas do Django, como criar migrações e executar testes.</li>
+        <li>meuprojeto: Diretório principal do seu projeto, contendo o arquivo settings.py com as configurações globais da aplicação.</li>
+        <li>meuprojeto/urls.py: Define as URLs que serão mapeadas para as funções do seu projeto.</li>
+        <li>meuprojeto/wsgi.py: Ponto de entrada para o servidor web do Django.</li>
+    </ul>
+
+    <h3>11. Criação do Aplicativo</h3>
+
+    <pre>
+        python manage.py startapp meu_projeto
+    </pre>
+
+    <h3>12. Adição do Aplicativo na Configuração do Projeto</h3>
+
+    No arquivo `settings.py` do projeto "meuprojeto", adicione o aplicativo "meu_projeto" à lista `INSTALLED_APPS`:
+
+    <pre>
+        INSTALLED_APPS = [
+            # ... outros aplicativos ...
+            'meu_projeto',
+        ]
+    </pre>
+
+    <h3>13. Configuração das URLs do Aplicativo</h3>
+
+    No arquivo `urls.py` do projeto "meuprojeto", importe o aplicativo "meu_projeto" e defina a rota principal:
+
+    <pre>
+        from meu_projeto import views
+
+        urlpatterns = [
+            path('', views.index, name='index'),
+            # ... outras rotas ...
+        ]
+    </pre>
+
+    <h3>14. Criação da Função de Visualização</h3>
+
+    No arquivo `views.py` do aplicativo "meu_projeto", crie a função de visualização `index` que renderiza o template HTML:
+
+    <pre>
+        from django.shortcuts import render
+
+        def index(request):
+            return render(request, 'index.html')
+    </pre>
+
+    <h3>15. Criação do Template HTML (index.html):</h3>
+
+    Crie o arquivo `index.html` na pasta `templates` do aplicativo "meu_projeto" com o conteúdo HTML desejado para a página inicial.
+  
+
+    <h3>16. link da folha de estilo:</h3>
+
+    link rel="stylesheet" href="{{ STATIC_URL }}static/style.css"
+
+   
+    <h3>17. Execução do Servidor de Desenvolvimento</h3>
+
+    <pre>
+        cd meuprojeto02
+        python manage.py runserver
+
+        Acesse http://127.0.0.1:8000/ em seu navegador para visualizar a página inicial.
+    </pre>
+    <img src="{% static 'django.gif' %}" alt="">
+</body>
+    
+{%endblock%}
+    
