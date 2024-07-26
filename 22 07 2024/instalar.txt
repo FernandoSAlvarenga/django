@@ -1,0 +1,14 @@
+pip install virtualenv
+python -m venv .venv
+.\.venv\Scripts\activate
+python.exe -m pip install --upgrade pip
+pip install django
+django-admin --version
+pip install mysql-connector
+django-admin startproject meu_projeto
+cd meu_projeto
+python manage.py startapp meu_app
+python manage.py runserver
+pip install mysqlclient
+python manage.py migrate 
+python manage.py createsuperuser 
