@@ -1,56 +1,97 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
-from .forms import ContatoForm
-from main.bd_config import conecta_no_banco_de_dados
-import mysql.connector
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_protect  # Adicione esta linha
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib import messages
+from .models import Pizza, Pedido
+from .forms import ContatoForm, UserForm, PizzaForm
+from django.views.decorators.csrf import csrf_protect
+from django.http import HttpResponseRedirect
+from .bd_config import conecta_no_banco_de_dados
+from django.contrib.auth.models import User
+
+def index(request):
+    return render(request, 'index.html')
+
+@login_required
+def logout(request):
+    auth_logout(request)
+    return redirect('login')
+
+@login_required
+def menu(request):
+    pizzas = Pizza.objects.all()
+    return render(request, 'menu.html', {'pizzas': pizzas})
+
+@login_required
+def pedido_pizza(request, pizza_id):
+    pizza = get_object_or_404(Pizza, id=pizza_id)
+    Pedido.objects.create(cliente=request.user, pizza=pizza)
+    messages.success(request, 'Pedido realizado com sucesso!')
+    return redirect('menu')
+
+@login_required
+def pedidos_cliente(request):
+    pedidos = Pedido.objects.filter(cliente=request.user)
+    return render(request, 'pedidos_cliente.html', {'pedidos': pedidos})
+
+@login_required
+def pedidos_admin(request):
+    if not request.user.is_superuser:
+        return redirect('menu')
+    pedidos = Pedido.objects.all()
+    return render(request, 'pedidos_admin.html', {'pedidos': pedidos})
+
+@login_required
+def editar_cliente(request, user_id):
+    if not request.user.is_superuser:
+        return redirect('menu')
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cliente atualizado com sucesso!')
+            return redirect('pedidos_admin')
+    else:
+        form = UserForm(instance=user)
+    return render(request, 'editar_cliente.html', {'form': form})
+
+@login_required
+def excluir_cliente(request, user_id):
+    if not request.user.is_superuser:
+        return redirect('menu')
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    messages.success(request, 'Cliente excluído com sucesso!')
+    return redirect('pedidos_admin')
 
 @csrf_protect
-def login_view(request):
+def login(request):
     if request.method == 'POST':
         try:
-            # Estabelecer conexão com o banco de dados
             bd = conecta_no_banco_de_dados()
             cursor = bd.cursor()
-
-            # Extrair credenciais do formulário
             email = request.POST['username']
             senha = request.POST['password']
-
-            # Consultar banco de dados para verificar credenciais
             cursor.execute("""
                 SELECT *
                 FROM usuarios
                 WHERE email = %s AND senha = %s;
             """, (email, senha,))
             usuario = cursor.fetchone()
-
             cursor.close()
             bd.close()
-
             if usuario:
-                # Iniciar sessão do usuário
                 request.session['usuario_id'] = usuario[0]
                 return redirect('pagina_inicial')
             else:
                 mensagem_erro = 'Email ou senha inválidos.'
                 return render(request, 'login.html', {'mensagem_erro': mensagem_erro})
-
         except Exception as e:
             mensagem_erro = f"Erro ao conectar ao banco de dados: {e}"
             return render(request, 'login.html', {'mensagem_erro': mensagem_erro})
-
     else:
         return render(request, 'login.html')
-
-def logout_view(request):
-    request.session['usuario_id'] = ""
-    return redirect('login')
-
-@login_required
-def pagina_inicial(request):
-    return render(request, 'Guia/index.html')
 
 @login_required
 def contatos(request):
@@ -59,13 +100,10 @@ def contatos(request):
         cursor = bd.cursor()
         cursor.execute('SELECT * FROM contatos WHERE situacao != "Atendimento" AND situacao != "Finalizado";')
         contatos = cursor.fetchall()
-        
         return render(request, 'contatos.html', {'contatos': contatos})
-
     except Exception as e:
         mensagem_erro = f"Erro ao recuperar contatos: {e}"
         return render(request, 'erro.html', {'mensagem_erro': mensagem_erro})
-
     finally:
         if bd:
             bd.close()
@@ -75,35 +113,23 @@ def atenderchamado(request, id):
     try:
         bd = conecta_no_banco_de_dados()
         cursor = bd.cursor()
-
-        # Atualizar status do contato
         sql_update = 'UPDATE contatos SET situacao = %s WHERE id_contato = %s;'
         values_update = ('Atendimento', int(id))
         cursor.execute(sql_update, values_update)
-
-        # Inserir registro na tabela usuario_contato
         sql_insert = """
             INSERT INTO usuario_contato (usuario_id, contato_id, situacao)
             VALUES (%s, %s, %s);
         """
         values_insert = (request.session['usuario_id'], int(id), 'Atendimento')
         cursor.execute(sql_insert, values_insert)
-
         bd.commit()
-
         return redirect('pagina_inicial')
-
     except Exception as e:
         mensagem_erro = f"Erro ao atender chamado: {e}"
         return render(request, 'erro.html', {'mensagem_erro': mensagem_erro})
-
     finally:
         if bd:
             bd.close()
-
-@login_required
-def index(request):
-    return render(request, 'Guia/index.html')
 
 @login_required
 def sobre(request):
@@ -115,33 +141,22 @@ def contato(request):
         if form.is_valid():
             try:
                 bd = conecta_no_banco_de_dados()
-
-                # Preparar consulta SQL e valores
+                cursor = bd.cursor()
                 nome = form.cleaned_data['nome']
                 email = form.cleaned_data['email']
                 mensagem = form.cleaned_data['mensagem']
-                sql = "INSERT INTO contatos (nome, email, mensagem) VALUES (%s, %s, %s)"
-                values = (nome, email, mensagem)
-
-                cursor = bd.cursor()
-                cursor.execute(sql, values)
+                cursor.execute("""
+                    INSERT INTO contatos (nome, email, mensagem, situacao)
+                    VALUES (%s, %s, %s, %s);
+                """, (nome, email, mensagem, 'Novo'))
                 bd.commit()
-
-                print(f"Dados do formulário salvos com sucesso!")
-                return HttpResponseRedirect('/')
-
-            except Exception as err:
-                print(f"Erro ao salvar dados no banco de dados: {err}")
-                mensagem_erro = "Ocorreu um erro ao processar o seu contato. Tente novamente mais tarde."
-                return render(request, 'erro.html', {'mensagem_erro': mensagem_erro}), 500
-
+                return redirect('pagina_inicial')
+            except Exception as e:
+                mensagem_erro = f"Erro ao conectar ao banco de dados: {e}"
+                return render(request, 'contato.html', {'form': form, 'mensagem_erro': mensagem_erro})
             finally:
                 if bd:
                     bd.close()
-
-        else:
-            return render(request, 'contato.html', {'form': form})
-
     else:
         form = ContatoForm()
-        return render(request, 'contato.html', {'form': form})
+    return render(request, 'contato.html', {'form': form})

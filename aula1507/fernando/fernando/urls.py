@@ -22,8 +22,21 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
+    path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+    path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
+    path('menu/', views.menu, name='menu'),
+    path('pedido/<int:pizza_id>/', views.pedido_pizza, name='pedido_pizza'),
+    path('pedidos_cliente/', views.pedidos_cliente, name='pedidos_cliente'),
+    path('pedidos_admin/', views.pedidos_admin, name='pedidos_admin'),
+    path('editar_cliente/<int:user_id>/', views.editar_cliente, name='editar_cliente'),
+    path('excluir_cliente/<int:user_id>/', views.excluir_cliente, name='excluir_cliente'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        path('static/<path:path>/', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+    ]
 

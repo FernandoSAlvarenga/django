@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meus Pedidos</title>
+</head>
+<body>
+    <h1>Meus Pedidos</h1>
+    <ul>
+        {% for pedido in pedidos %}
+        <li>
+            {{ pedido.pizza.nome }} - {{ pedido.status }} - {{ pedido.data_pedido }}
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'menu' %}">Voltar ao Cardápio</a>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cardápio</title>
+</head>
+<body>
+    <h1>Cardápio</h1>
+    <ul>
+        {% for pizza in pizzas %}
+        <li>
+            <img src="{{ pizza.imagem.url }}" alt="{{ pizza.nome }}" style="width: 100px;">
+            <h2>{{ pizza.nome }}</h2>
+            <p>{{ pizza.descricao }}</p>
+            <p>R$ {{ pizza.preco }}</p>
+            <a href="{% url 'pedido_pizza' pizza.id %}">Pedir</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'pedidos_cliente' %}">Meus Pedidos</a>
+</body>
+</html>
